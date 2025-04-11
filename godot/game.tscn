@@ -1,0 +1,50 @@
+[gd_scene load_steps=7 format=3 uid="uid://bfl7kehnwtsy8"]
+
+[ext_resource type="Script" uid="uid://bp1v7gs5vguic" path="res://game.gd" id="1_feb5d"]
+[ext_resource type="AudioStream" uid="uid://b1fwuaqseo0k5" path="res://music/Soft Fuzzy Man.mp3" id="2_ryrav"]
+[ext_resource type="AudioStream" uid="uid://cpdvlwxab5ugc" path="res://sfx/metronome/firstNote.ogg" id="4_7jktm"]
+[ext_resource type="Script" uid="uid://ctwvnx6v77dvu" path="res://music.gd" id="4_ryrav"]
+[ext_resource type="AudioStream" uid="uid://c5af0dvtww5nh" path="res://sfx/metronome/otherNotes.ogg" id="5_ryrav"]
+[ext_resource type="Texture2D" uid="uid://cj1bsib5jphk0" path="res://icon.svg" id="6_ryrav"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_feb5d")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_ryrav")
+volume_db = -16.589
+autoplay = true
+parameters/looping = true
+script = ExtResource("4_ryrav")
+beatsPerMinute = 145
+beatsPerMeasure = 4
+offset = 0.1
+
+[node name="MetronomeFirst" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_7jktm")
+parameters/looping = true
+
+[node name="MetronomeOther" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_ryrav")
+parameters/looping = true
+
+[node name="Indicators" type="Node2D" parent="."]
+
+[node name="indicator_1" type="Sprite2D" parent="Indicators"]
+position = Vector2(337, 357)
+scale = Vector2(1.3125, 1.51562)
+texture = ExtResource("6_ryrav")
+
+[node name="indicator_2" type="Sprite2D" parent="Indicators"]
+position = Vector2(488, 365)
+texture = ExtResource("6_ryrav")
+
+[node name="indicator_3" type="Sprite2D" parent="Indicators"]
+position = Vector2(623, 364)
+texture = ExtResource("6_ryrav")
+
+[node name="indicator_4" type="Sprite2D" parent="Indicators"]
+position = Vector2(756, 365)
+texture = ExtResource("6_ryrav")
+
+[connection signal="beat" from="MusicPlayer" to="." method="_on_music_player_beat"]
