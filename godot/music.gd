@@ -8,10 +8,13 @@ signal get_ready(beat)
 
 @export var beatsPerMinute : float = 120;
 @export var beatsPerMeasure: int = 4;
-@export var offset : float = 0;
+@export var beatOffset : float = 0;
 # What they are in LMMS -1, because it starts counting at 1, while we start with 0
-@export var songIntroMeasures: int = 4;
-@export var songEndingMeasures: int = 44;
+@export var songIntroMeasures: int = -1;
+@export var songEndingMeasures: int = -1;
+@export var active : bool = true
+@export var trial : bool = false
+
 var songIntroBeats : int = 0;
 var songEndingBeats : int = 0;
 
@@ -47,17 +50,27 @@ var previousSongState : int = SongStateEnum.NOT_STARTED;
 var songState : int = SongStateEnum.INTRO;
 
 func _ready() -> void:
+	if (active):
+		self.play()
 	beatsPerSecond = beatsPerMinute/60.0;
 	beatTime = 1.0/beatsPerSecond;
 	songIntroBeats = songIntroMeasures * beatsPerMeasure;
 	songEndingBeats = songEndingMeasures * beatsPerMeasure;
 
+func activate():
+	active = true
+	self.play()
+	
+func deactivate():
+	active = false
+	self.stop()
+
 func _physics_process(delta: float) -> void:
-	if (songState == SongStateEnum.STOPPED):
+	if (songState == SongStateEnum.STOPPED or not active):
 		return;
 	
 	# Current position within the song, aligned with beats
-	currentPosition = ((self.get_playback_position() + AudioServer.get_time_since_last_mix()) + offset)/beatTime;
+	currentPosition = ((self.get_playback_position() + AudioServer.get_time_since_last_mix()) + beatOffset)/beatTime;
 	
 	# Calculate Error for this position
 	nextBeat = ceil(currentPosition);
@@ -68,8 +81,8 @@ func _physics_process(delta: float) -> void:
 		currentError = currentPosition - lastBeat
 	
 	# Exact beat
-	if (currentBeat != lastBeat):
-		currentBeat = lastBeat;
+	if (currentBeat != int(lastBeat)):
+		currentBeat = int(lastBeat);
 		if (currentBeat != previousBeat):
 			previousBeat = currentBeat;
 			
@@ -79,23 +92,22 @@ func _physics_process(delta: float) -> void:
 			totalNumberOfBeats += 1;
 			
 			# Check if we're in the intro or ending
-			if (totalNumberOfBeats < songIntroBeats + 1):
+			if (songIntroMeasures != -1 and totalNumberOfBeats < songIntroBeats + 1):
 				songState = SongStateEnum.INTRO
 				get_ready.emit(abs(songIntroBeats - currentBeat) - 1);
-			elif (totalNumberOfBeats > songEndingBeats):  
+			elif (songEndingMeasures != -1 and totalNumberOfBeats > songEndingBeats):
 				songState = SongStateEnum.ENDING
 			else:
 				songState = SongStateEnum.MIDDLE
 			
 			# Only count beats that are not part of the intro or ending
 			if (songState == SongStateEnum.MIDDLE):
-				print([lastInputBeat, currentBeat-2])
-				if (lastInputBeat < currentBeat-2):
+				countedNumberOfBeats += 1
+				if (lastInputBeat < currentBeat-2 and not trial):
 					# Punish player
 					calculateError(-1)
 					noInputBeats += 1;
 					no_input.emit()
-				countedNumberOfBeats += 1
 			
 			# Tell the main function what part of the song we're in now
 			if (songState != previousSongState):
@@ -113,6 +125,7 @@ func getBeat(offset, errorMargin):
 		calculateError(error)
 	else:
 		beatFailed = true;
+	#print("%d/%d" % [songState,SongStateEnum.MIDDLE])
 	return {
 		"isBeatCountable": songState == SongStateEnum.MIDDLE,
 		"error": error,

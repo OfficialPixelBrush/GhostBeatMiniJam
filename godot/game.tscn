@@ -1,7 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://bfl7kehnwtsy8"]
+[gd_scene load_steps=17 format=3 uid="uid://bfl7kehnwtsy8"]
 
 [ext_resource type="Script" uid="uid://bp1v7gs5vguic" path="res://game.gd" id="1_feb5d"]
 [ext_resource type="AudioStream" uid="uid://3tjcntqv2pv1" path="res://music/rhythmGame.ogg" id="2_ryrav"]
+[ext_resource type="AudioStream" uid="uid://cp2p3k8bobtbv" path="res://music/menu.ogg" id="4_7sc4i"]
 [ext_resource type="AudioStream" uid="uid://bh3ciwt6nk4en" path="res://sfx/beat.wav" id="4_lc2xo"]
 [ext_resource type="Script" uid="uid://ctwvnx6v77dvu" path="res://music.gd" id="4_ryrav"]
 [ext_resource type="AudioStream" uid="uid://4slfkjuurg5r" path="res://sfx/failure.wav" id="5_eow3j"]
@@ -13,22 +14,30 @@
 [ext_resource type="AudioStream" uid="uid://dl0ohc74ypd8u" path="res://sfx/rating/passable.ogg" id="10_215e1"]
 [ext_resource type="AudioStream" uid="uid://dxvfflwvedp31" path="res://sfx/rating/bad.ogg" id="11_7sc4i"]
 [ext_resource type="AudioStream" uid="uid://bgisag05g4xqy" path="res://sfx/rating/fail.ogg" id="12_80cx4"]
+[ext_resource type="Texture2D" uid="uid://cke8u27tcgqcy" path="res://gfx/menu/ghostBeat.png" id="14_215e1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j5wjh"]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("music_player")]
 script = ExtResource("1_feb5d")
+music_player = NodePath("MenuMusicPlayer")
 inputOffset = -0.05
-errorMargin = 0.2
+errorMargin = 0.15
 
-[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+[node name="MenuMusicPlayer" type="AudioStreamPlayer" parent="." groups=["MusicPlayers"]]
+stream = ExtResource("4_7sc4i")
+script = ExtResource("4_ryrav")
+trial = true
+
+[node name="GameMusicPlayer" type="AudioStreamPlayer" parent="." groups=["MusicPlayers"]]
 stream = ExtResource("2_ryrav")
-volume_db = -16.589
-autoplay = true
 script = ExtResource("4_ryrav")
 beatsPerMinute = 160.0
+songIntroMeasures = 4
+songEndingMeasures = 48
+active = false
 
-[node name="Beat" type="AudioStreamPlayer" parent="."]
+[node name="BeatSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_lc2xo")
 
 [node name="Failure" type="AudioStreamPlayer" parent="."]
@@ -44,28 +53,111 @@ stream = ExtResource("6_lc2xo")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera2D"]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D/CanvasLayer"]
-offset_left = 500.0
-offset_right = 652.0
-offset_bottom = 648.0
-size_flags_horizontal = 4
+[node name="Menu" type="HBoxContainer" parent="Camera2D/CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -246.5
+offset_top = -253.5
+offset_right = 246.5
+offset_bottom = 253.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D/CanvasLayer/Menu"]
+layout_mode = 2
+size_flags_horizontal = 8
 size_flags_vertical = 4
 
-[node name="Ratings" type="VBoxContainer" parent="Camera2D/CanvasLayer/HBoxContainer"]
-visible = false
+[node name="WelcomeToText" type="Label" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+text = "Welcome to"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+custom_minimum_size = Vector2(58.21, 200)
+layout_mode = 2
+texture = ExtResource("14_215e1")
+expand_mode = 5
+
+[node name="MenuText" type="Label" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Hit Space 8 times on-beat to start!"
+horizontal_alignment = 1
+
+[node name="MusicVolumeSlider" type="HSlider" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+max_value = 2.0
+step = 0.1
+value = 1.0
+tick_count = 11
+ticks_on_borders = true
+
+[node name="MusicVolumeText" type="Label" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+text = "Music Volume: 100%"
+
+[node name="SFXVolumeSlider" type="HSlider" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+max_value = 2.0
+step = 0.1
+value = 1.0
+tick_count = 11
+ticks_on_borders = true
+
+[node name="SFXVolumeText" type="Label" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+text = "SFX Volume: 100%"
+
+[node name="DelaySlider" type="HSlider" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+tick_count = 11
+ticks_on_borders = true
+
+[node name="DelayText" type="Label" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+text = "Delay: 0.0 Beats"
+
+[node name="MetronomeToggle" type="CheckButton" parent="Camera2D/CanvasLayer/Menu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Metronome"
+alignment = 1
+
+[node name="RatingsHBoxContainer" type="HBoxContainer" parent="Camera2D/CanvasLayer"]
+visible = false
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -77.0
+offset_right = 77.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="RatingsVBoxContainer" type="VBoxContainer" parent="Camera2D/CanvasLayer/RatingsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
 size_flags_vertical = 4
 alignment = 1
 
-[node name="RatingLabel" type="Label" parent="Camera2D/CanvasLayer/HBoxContainer/Ratings"]
+[node name="RatingLabel" type="Label" parent="Camera2D/CanvasLayer/RatingsHBoxContainer/RatingsVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_font_sizes/font_size = 50
 text = "Rating"
 horizontal_alignment = 1
 
-[node name="ErrorLabel" type="Label" parent="Camera2D/CanvasLayer/HBoxContainer/Ratings"]
+[node name="ErrorLabel" type="Label" parent="Camera2D/CanvasLayer/RatingsHBoxContainer/RatingsVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
@@ -77,15 +169,6 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 92.0
 grow_horizontal = 2
-
-[node name="TimingLabel" type="Label" parent="Camera2D/CanvasLayer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-theme_override_font_sizes/font_size = 20
-text = "-"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Camera2D/CanvasLayer/VBoxContainer"]
 layout_mode = 2
@@ -120,6 +203,15 @@ text = "Late"
 horizontal_alignment = 2
 uppercase = true
 
+[node name="TimingLabel" type="Label" parent="Camera2D/CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 20
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="RatingSounds" type="Node2D" parent="."]
 
 [node name="PerfectRating" type="AudioStreamPlayer" parent="RatingSounds"]
@@ -137,10 +229,21 @@ stream = ExtResource("11_7sc4i")
 [node name="FailRating" type="AudioStreamPlayer" parent="RatingSounds"]
 stream = ExtResource("12_80cx4")
 
-[connection signal="beat" from="MusicPlayer" to="." method="_on_music_player_beat"]
-[connection signal="ending" from="MusicPlayer" to="." method="_on_music_player_ending"]
-[connection signal="finished" from="MusicPlayer" to="." method="_on_music_player_finished"]
-[connection signal="finished" from="MusicPlayer" to="MusicPlayer" method="_on_finished"]
-[connection signal="get_ready" from="MusicPlayer" to="." method="_on_music_player_get_ready"]
-[connection signal="intro" from="MusicPlayer" to="." method="_on_music_player_intro"]
-[connection signal="no_input" from="MusicPlayer" to="." method="_on_music_player_no_input"]
+[connection signal="beat" from="MenuMusicPlayer" to="." method="_on_music_player_beat"]
+[connection signal="ending" from="MenuMusicPlayer" to="." method="_on_music_player_ending"]
+[connection signal="finished" from="MenuMusicPlayer" to="." method="_on_music_player_finished"]
+[connection signal="finished" from="MenuMusicPlayer" to="MenuMusicPlayer" method="_on_finished"]
+[connection signal="get_ready" from="MenuMusicPlayer" to="." method="_on_music_player_get_ready"]
+[connection signal="intro" from="MenuMusicPlayer" to="." method="_on_music_player_intro"]
+[connection signal="no_input" from="MenuMusicPlayer" to="." method="_on_music_player_no_input"]
+[connection signal="beat" from="GameMusicPlayer" to="." method="_on_music_player_beat"]
+[connection signal="ending" from="GameMusicPlayer" to="." method="_on_music_player_ending"]
+[connection signal="finished" from="GameMusicPlayer" to="." method="_on_music_player_finished"]
+[connection signal="finished" from="GameMusicPlayer" to="GameMusicPlayer" method="_on_finished"]
+[connection signal="get_ready" from="GameMusicPlayer" to="." method="_on_music_player_get_ready"]
+[connection signal="intro" from="GameMusicPlayer" to="." method="_on_music_player_intro"]
+[connection signal="no_input" from="GameMusicPlayer" to="." method="_on_music_player_no_input"]
+[connection signal="value_changed" from="Camera2D/CanvasLayer/Menu/VBoxContainer/MusicVolumeSlider" to="." method="_on_music_volume_slider_value_changed"]
+[connection signal="value_changed" from="Camera2D/CanvasLayer/Menu/VBoxContainer/SFXVolumeSlider" to="." method="_on_sfx_volume_slider_value_changed"]
+[connection signal="value_changed" from="Camera2D/CanvasLayer/Menu/VBoxContainer/DelaySlider" to="." method="_on_delay_slider_value_changed"]
+[connection signal="toggled" from="Camera2D/CanvasLayer/Menu/VBoxContainer/MetronomeToggle" to="." method="_on_metronome_toggle_toggled"]
