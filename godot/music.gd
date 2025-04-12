@@ -1,29 +1,138 @@
 extends AudioStreamPlayer
 
 signal beat(beat)
-signal measure
+signal intro
+signal ending
+signal no_input(noInputBeats)
+signal get_ready(beat)
 
-@export var beatsPerMinute : int;
-@export var beatsPerMeasure: int;
+@export var beatsPerMinute : float = 120;
+@export var beatsPerMeasure: int = 4;
 @export var offset : float = 0;
+# What they are in LMMS -1, because it starts counting at 1, while we start with 0
+@export var songIntroMeasures: int = 4;
+@export var songEndingMeasures: int = 44;
+var songIntroBeats : int = 0;
+var songEndingBeats : int = 0;
+
 var beatsPerSecond : float;
 var beatTime : float;
+var totalNumberOfBeats : int;
+var countedNumberOfBeats : int;
+
+var currentError : float = 0;
+var averageError : float = 0;
+var totalError : float = 0;
 
 var currentBeat : int = -1;
-var lastBeat : int = -2;
-var currentPosition = 0;
+var previousBeat : int = -2;
+
+var currentPosition : float = 0.0;
+var nextBeat : float;
+var lastBeat : float;
+
+var lastInputBeat : int = 0;
+var noInputBeats : int = 0;
+
+enum SongStateEnum {
+	NOT_STARTED = 0,
+	INTRO = 1,
+	MIDDLE = 2,
+	ENDING = 3,
+	STOPPED = 4
+}
+
+# Current state of the song
+var previousSongState : int = SongStateEnum.NOT_STARTED;
+var songState : int = SongStateEnum.INTRO;
 
 func _ready() -> void:
 	beatsPerSecond = beatsPerMinute/60.0;
 	beatTime = 1.0/beatsPerSecond;
+	songIntroBeats = songIntroMeasures * beatsPerMeasure;
+	songEndingBeats = songEndingMeasures * beatsPerMeasure;
 
 func _physics_process(delta: float) -> void:
-	currentPosition = (self.get_playback_position() + AudioServer.get_time_since_last_mix()) + offset;
+	if (songState == SongStateEnum.STOPPED):
+		return;
 	
-	if (currentBeat != floor(currentPosition/beatTime)):
-		currentBeat = floor(currentPosition/beatTime);
-		if (currentBeat != lastBeat):
-			lastBeat = currentBeat;
+	# Current position within the song, aligned with beats
+	currentPosition = ((self.get_playback_position() + AudioServer.get_time_since_last_mix()) + offset)/beatTime;
+	
+	# Calculate Error for this position
+	nextBeat = ceil(currentPosition);
+	lastBeat = floor(currentPosition);
+	if (currentPosition > lastBeat + 0.5):  
+		currentError = nextBeat - currentPosition
+	else:
+		currentError = currentPosition - lastBeat
+	
+	# Exact beat
+	if (currentBeat != lastBeat):
+		currentBeat = lastBeat;
+		if (currentBeat != previousBeat):
+			previousBeat = currentBeat;
+			
+			# Send a beat out
 			beat.emit(currentBeat%beatsPerMeasure);
-			if (currentBeat == 0):
-				measure.emit();
+			
+			totalNumberOfBeats += 1;
+			
+			# Check if we're in the intro or ending
+			if (totalNumberOfBeats < songIntroBeats + 1):
+				songState = SongStateEnum.INTRO
+				get_ready.emit(abs(songIntroBeats - currentBeat) - 1);
+			elif (totalNumberOfBeats > songEndingBeats):  
+				songState = SongStateEnum.ENDING
+			else:
+				songState = SongStateEnum.MIDDLE
+			
+			# Only count beats that are not part of the intro or ending
+			if (songState == SongStateEnum.MIDDLE):
+				print([lastInputBeat, currentBeat-2])
+				if (lastInputBeat < currentBeat-2):
+					# Punish player
+					calculateError(-1)
+					noInputBeats += 1;
+					no_input.emit()
+				countedNumberOfBeats += 1
+			
+			# Tell the main function what part of the song we're in now
+			if (songState != previousSongState):
+				if (previousSongState == SongStateEnum.INTRO):
+					intro.emit()
+				if (songState == SongStateEnum.ENDING):
+					ending.emit()
+	previousSongState = songState
+
+func getBeat(offset, errorMargin):
+	lastInputBeat = currentBeat;
+	var beatFailed = false;
+	var error = currentError + offset
+	if (abs(error) < errorMargin):
+		calculateError(error)
+	else:
+		beatFailed = true;
+	return {
+		"isBeatCountable": songState == SongStateEnum.MIDDLE,
+		"error": error,
+		"currentBeat": currentBeat,
+		"beatFailed": beatFailed,
+	}
+
+func calculateError(error):
+	averageError += abs(error);
+	totalError += error;
+
+func getAverageError() -> float:
+	return averageError/float(countedNumberOfBeats);
+	
+func getTotalError() -> float:
+	return totalError;
+
+func getNoInputs() -> int:
+	return noInputBeats;
+
+func _on_finished() -> void:
+	songState = SongStateEnum.STOPPED
+	pass # Replace with function body.

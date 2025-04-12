@@ -11,6 +11,8 @@ config_version=5
 [application]
 
 config/name="GhostFight"
+config/description="s"
+config/version="0.1.0"
 run/main_scene="uid://bfl7kehnwtsy8"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
