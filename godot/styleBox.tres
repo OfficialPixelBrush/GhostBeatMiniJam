@@ -4,8 +4,8 @@
 content_margin_bottom = 60.0
 bg_color = Color(0.646797, 0.509212, 0.920296, 1)
 skew = Vector2(0.39, 0)
-border_width_left = 200
-border_width_right = 200
+border_width_left = 400
+border_width_right = 400
 border_color = Color(0.987587, 0, 0.295977, 1)
 border_blend = true
 corner_detail = 1

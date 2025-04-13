@@ -52,6 +52,10 @@ var songState : int = SongStateEnum.INTRO;
 func _ready() -> void:
 	if (active):
 		self.play()
+	if (songIntroMeasures != -1):
+		songIntroMeasures -= 1
+	if (songEndingMeasures != -1):
+		songEndingMeasures -= 1
 	beatsPerSecond = beatsPerMinute/60.0;
 	beatTime = 1.0/beatsPerSecond;
 	songIntroBeats = songIntroMeasures * beatsPerMeasure;

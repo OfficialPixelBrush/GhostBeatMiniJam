@@ -8,12 +8,12 @@ extends Node2D
 @export var music_player : AudioStreamPlayer;
 @onready var game_music_player: AudioStreamPlayer = $GameMusicPlayer
 
-@onready var timing_label: Label = $Camera2D/CanvasLayer/VBoxContainer/TimingLabel
-@onready var timing_slider: HSlider = $Camera2D/CanvasLayer/VBoxContainer/HBoxContainer/TimingSlider
+@onready var timing_label: Label = $CanvasLayer/VBoxContainer/TimingLabel
+@onready var timing_slider: HSlider = $CanvasLayer/VBoxContainer/HBoxContainer/TimingSlider
 
-@onready var ratings: HBoxContainer = $Camera2D/CanvasLayer/RatingsHBoxContainer
-@onready var rating_label: Label = $Camera2D/CanvasLayer/RatingsHBoxContainer/RatingsVBoxContainer/RatingLabel
-@onready var error_label: Label = $Camera2D/CanvasLayer/RatingsHBoxContainer/RatingsVBoxContainer/ErrorLabel
+@onready var ratings: HBoxContainer = $CanvasLayer/RatingsHBoxContainer
+@onready var rating_label: Label = $CanvasLayer/RatingsHBoxContainer/RatingsVBoxContainer/RatingLabel
+@onready var error_label: Label = $CanvasLayer/RatingsHBoxContainer/RatingsVBoxContainer/ErrorLabel
 
 @onready var perfect_rating: AudioStreamPlayer = $RatingSounds/PerfectRating
 @onready var great_rating: AudioStreamPlayer = $RatingSounds/GreatRating
@@ -21,12 +21,15 @@ extends Node2D
 @onready var bad_rating: AudioStreamPlayer = $RatingSounds/BadRating
 @onready var fail_rating: AudioStreamPlayer = $RatingSounds/FailRating
 
-@onready var menu: HBoxContainer = $Camera2D/CanvasLayer/Menu
+@onready var menu: HBoxContainer = $CanvasLayer/Menu
 
-@onready var music_volume_text: Label = $Camera2D/CanvasLayer/Menu/VBoxContainer/MusicVolumeText
-@onready var sfx_volume_text: Label = $Camera2D/CanvasLayer/Menu/VBoxContainer/SFXVolumeText
-@onready var delay_text: Label = $Camera2D/CanvasLayer/Menu/VBoxContainer/DelayText
-@onready var delay_slider: HSlider = $Camera2D/CanvasLayer/Menu/VBoxContainer/DelaySlider
+@onready var music_volume_slider: HSlider = $CanvasLayer/Menu/VBoxContainer/MusicVolumeSlider
+@onready var music_volume_text: Label = $CanvasLayer/Menu/VBoxContainer/MusicVolumeText
+@onready var sfx_volume_text: Label = $CanvasLayer/Menu/VBoxContainer/SFXVolumeText
+@onready var delay_text: Label = $CanvasLayer/Menu/VBoxContainer/DelayText
+@onready var delay_slider: HSlider = $CanvasLayer/Menu/VBoxContainer/DelaySlider
+
+@onready var crowd_layer: ParallaxLayer = $ParallaxBackground/CrowdLayer
 
 @export var inputOffset: float = 0.0;
 @export var errorMargin : float = 0.3;
@@ -86,6 +89,7 @@ var noInputMessages = [
 ]
 
 func _ready() -> void:
+	setMusicVolume(music_volume_slider.value)
 	delay_text.text = "Delay: %.2f Beats" % inputOffset
 	delay_slider.value = inputOffset
 
@@ -117,6 +121,8 @@ func _input(event):
 				beatsHit += 1
 		else:
 			timing_label.text = "Wait!";
+	if event.is_action_pressed("close_game"):
+		get_tree().quit()
 
 func getFailMessage(failType) -> String:
 	match(failType):
@@ -138,6 +144,7 @@ func checkMenu():
 	if (beatsHit > startGameBeats - 1):
 		menuMode = false
 		menu.hide()
+		crowd_layer.show()
 		switchMusicPlayer(game_music_player);
 
 func _on_music_player_beat(beat) -> void:
@@ -211,12 +218,14 @@ func _on_music_player_get_ready(beat: Variant) -> void:
 
 
 func _on_music_volume_slider_value_changed(value: float) -> void:
+	setMusicVolume(value)
+	pass # Replace with function body.
+
+func setMusicVolume(value):
 	music_volume_text.text = "Music Volume: %.0f%%" % (value*100)
 	for node in self.get_children():
 		if (node is AudioStreamPlayer and node.is_in_group("MusicPlayers")):
 			node.volume_linear = value;
-	pass # Replace with function body.
-
 
 func _on_sfx_volume_slider_value_changed(value: float) -> void:
 	sfx_volume_text.text = "SFX Volume: %.0f%%" % (value*100)
