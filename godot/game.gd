@@ -161,14 +161,14 @@ func checkMenu():
 		switchMusicPlayer(game_music_player);
 
 func _on_music_player_beat(beat) -> void:
-	if (playMetronome):
+	sendBeatToEntities();
+	checkMenu()
+	if (playMetronome): 
 		if (beat == 0):
 			metronome_first.play();
 		else:
 			metronome_other.play();
 		return
-	checkMenu()
-	sendBeatToEntities();
 	pass # Replace with function body.
 
 func _on_music_player_finished() -> void:

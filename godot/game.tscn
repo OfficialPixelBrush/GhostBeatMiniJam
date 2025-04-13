@@ -119,6 +119,7 @@ music_player = NodePath("MenuMusicPlayer")
 crowd_layer = NodePath("ParallaxBackground/CrowdLayer")
 enemy = NodePath("GhostFrog")
 inputOffset = -0.05
+errorMargin = 0.15
 
 [node name="MenuMusicPlayer" type="AudioStreamPlayer" parent="." groups=["MusicPlayers"]]
 stream = ExtResource("4_7sc4i")
