@@ -15,6 +15,8 @@ signal get_ready(beat)
 @export var active : bool = true
 @export var trial : bool = false
 
+@onready var debug: Label = $"../CanvasLayer/VBoxContainer/Debug"
+
 var songIntroBeats : int = 0;
 var songEndingBeats : int = 0;
 
@@ -71,10 +73,16 @@ func deactivate():
 
 func _physics_process(_delta: float) -> void:
 	if (songState == SongStateEnum.STOPPED or not active):
-		return;
+		return; 
 	
 	# Current position within the song, aligned with beats
-	currentPosition = ((self.get_playback_position() + AudioServer.get_time_since_last_mix()) + beatOffset)/beatTime;
+	# + AudioServer.get_time_since_last_mix()
+	#debug.text = "PP: %f" % (self.get_playback_position())
+	#debug.text += "\n"
+	#debug.text += "AS: %f" % (AudioServer.get_time_since_last_mix())
+	#debug.text += "\n"
+	#debug.text += "FN: %f" % (truePos)
+	currentPosition = (self.get_playback_position()+ AudioServer.get_time_since_last_mix() + beatOffset)/beatTime;
 	
 	# Calculate Error for this position
 	nextBeat = ceil(currentPosition);

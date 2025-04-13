@@ -21,13 +21,13 @@ extends Node2D
 @onready var bad_rating: AudioStreamPlayer = $RatingSounds/BadRating
 @onready var fail_rating: AudioStreamPlayer = $RatingSounds/FailRating
 
-@onready var menu: HBoxContainer = $CanvasLayer/Menu
+@onready var menu: Control = $CanvasLayer/Menu
 
-@onready var music_volume_slider: HSlider = $CanvasLayer/Menu/VBoxContainer/MusicVolumeSlider
-@onready var music_volume_text: Label = $CanvasLayer/Menu/VBoxContainer/MusicVolumeText
-@onready var sfx_volume_text: Label = $CanvasLayer/Menu/VBoxContainer/SFXVolumeText
-@onready var delay_text: Label = $CanvasLayer/Menu/VBoxContainer/DelayText
-@onready var delay_slider: HSlider = $CanvasLayer/Menu/VBoxContainer/DelaySlider
+@onready var music_volume_slider: HSlider = $CanvasLayer/Menu/Logo/VBoxContainer/MusicVolumeSlider
+@onready var music_volume_text: Label = $CanvasLayer/Menu/Logo/VBoxContainer/MusicVolumeText
+@onready var sfx_volume_text: Label = $CanvasLayer/Menu/Logo/VBoxContainer/SFXVolumeText
+@onready var delay_text: Label = $CanvasLayer/Menu/Logo/VBoxContainer/DelayText
+@onready var delay_slider: HSlider = $CanvasLayer/Menu/Logo/VBoxContainer/DelaySlider
 
 @export var crowd_layer: ParallaxLayer
 @export var enemy: Node2D
@@ -52,6 +52,7 @@ var beatsMissed : int = 0;
 var numberOfBeats : int = 0;
 var countedBeats : int = 0;
 var noInputBeats : int = 0;
+var beatReleased : bool = true;
  
 var menuMode = true;
 
@@ -109,7 +110,11 @@ func switchMusicPlayer(newMusicPlayer):
 	music_player.activate()
 
 func _input(event):
-	if event.is_action_pressed("input_beat"):
+	if event.is_action_released("input_beat"):
+		beatReleased = true;
+	
+	if event.is_action_pressed("input_beat") and beatReleased:
+		beatReleased = false
 		player.beat()
 		beatSound.play()
 		var result = music_player.getBeat(inputOffset,errorMargin)
@@ -156,14 +161,14 @@ func checkMenu():
 		switchMusicPlayer(game_music_player);
 
 func _on_music_player_beat(beat) -> void:
-	sendBeatToEntities();
-	checkMenu()
-	if (not playMetronome):
+	if (playMetronome):
+		if (beat == 0):
+			metronome_first.play();
+		else:
+			metronome_other.play();
 		return
-	if (beat == 0):
-		metronome_first.play();
-	else:
-		metronome_other.play();
+	checkMenu()
+	sendBeatToEntities();
 	pass # Replace with function body.
 
 func _on_music_player_finished() -> void:

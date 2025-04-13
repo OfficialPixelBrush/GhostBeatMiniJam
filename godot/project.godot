@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="GhostBeat"
-config/description="Defeat the evil ghosts with your steady rhythm!s"
-config/version="0.1.2s"
+config/description="Defeat the evil ghosts with your steady rhythms!"
+config/version="0.1.3"
 run/main_scene="uid://bfl7kehnwtsy8"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://c3gvmlci3pqng"
