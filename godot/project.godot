@@ -11,7 +11,6 @@ config_version=5
 [application]
 
 config/name="GhostBeat"
-config/description="s"
 config/version="0.1.1s"
 run/main_scene="uid://bfl7kehnwtsy8"
 config/features=PackedStringArray("4.4", "GL Compatibility")
@@ -58,4 +57,4 @@ close_game={
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.419608, 0.231373, 0.262745, 1)
+environment/defaults/default_clear_color=Color(0.0664378, 0.0234379, 0.0859693, 1)

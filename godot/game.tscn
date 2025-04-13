@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bfl7kehnwtsy8"]
+[gd_scene load_steps=31 format=3 uid="uid://bfl7kehnwtsy8"]
 
 [ext_resource type="Script" uid="uid://bp1v7gs5vguic" path="res://game.gd" id="1_feb5d"]
 [ext_resource type="AudioStream" uid="uid://3tjcntqv2pv1" path="res://music/rhythmGame.ogg" id="2_ryrav"]
@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://5cuwywy8n1a2" path="res://sfx/rating/great.ogg" id="9_lc2xo"]
 [ext_resource type="AudioStream" uid="uid://dl0ohc74ypd8u" path="res://sfx/rating/passable.ogg" id="10_215e1"]
 [ext_resource type="Script" uid="uid://g67768jvp8fm" path="res://entity.gd" id="10_e36ub"]
+[ext_resource type="Texture2D" uid="uid://832h3guc5id7" path="res://gfx/bg/light.png" id="10_hb5m1"]
 [ext_resource type="AudioStream" uid="uid://dxvfflwvedp31" path="res://sfx/rating/bad.ogg" id="11_7sc4i"]
 [ext_resource type="AudioStream" uid="uid://bgisag05g4xqy" path="res://sfx/rating/fail.ogg" id="12_80cx4"]
 [ext_resource type="Texture2D" uid="uid://cke8u27tcgqcy" path="res://gfx/menu/ghostBeat.png" id="14_215e1"]
@@ -20,6 +21,23 @@
 [ext_resource type="Texture2D" uid="uid://bbw5bf8l6y7qs" path="res://gfx/bg/crowd.png" id="17_e8heu"]
 [ext_resource type="PackedScene" uid="uid://d0aqrghhl8l35" path="res://ghostFrog.tscn" id="18_boyg6"]
 [ext_resource type="PackedScene" uid="uid://dku5dmb6difq2" path="res://player.tscn" id="18_rvswv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j5wjh"]
+
+[sub_resource type="Animation" id="Animation_hb5m1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CrowdSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_e36ub"]
 resource_name = "hit_beat"
@@ -38,28 +56,62 @@ tracks/0/keys = {
 "values": [Vector2(0, -4), Vector2(0, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_hb5m1"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("CrowdSprite:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hb5m1"]
 _data = {
 &"RESET": SubResource("Animation_hb5m1"),
 &"hit_beat": SubResource("Animation_e36ub")
 }
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j5wjh"]
+[sub_resource type="Animation" id="Animation_x5p1p"]
+resource_name = "hit_beat"
+length = 0.333342
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0.66, 0.65), Vector2(0.655, 0.655)]
+}
+
+[sub_resource type="Animation" id="Animation_qhcbd"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.655, 0.655)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_f1jbl"]
+_data = {
+&"RESET": SubResource("Animation_qhcbd"),
+&"hit_beat": SubResource("Animation_x5p1p")
+}
+
+[sub_resource type="Gradient" id="Gradient_hb5m1"]
+interpolation_mode = 2
+colors = PackedColorArray(1, 0.802, 0.67, 0.764706, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_x5p1p"]
+gradient = SubResource("Gradient_hb5m1")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.8, 0.8)
+metadata/_snap_count = 2
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("music_player", "crowd_layer", "enemy")]
 script = ExtResource("1_feb5d")
@@ -79,7 +131,7 @@ stream = ExtResource("2_ryrav")
 script = ExtResource("4_ryrav")
 beatsPerMinute = 160.0
 songIntroMeasures = 5
-songEndingMeasures = 49
+songEndingMeasures = 77
 active = false
 
 [node name="BeatSound" type="AudioStreamPlayer" parent="."]
@@ -96,31 +148,30 @@ stream = ExtResource("6_lc2xo")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-
-[node name="StageLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-
-[node name="StageSprite" type="Sprite2D" parent="ParallaxBackground/StageLayer"]
-scale = Vector2(0.655, 0.655)
-texture = ExtResource("16_80cx4")
-
-[node name="CrowdLayer" type="ParallaxLayer" parent="ParallaxBackground" node_paths=PackedStringArray("animation_player") groups=["BeatReceivers"]]
-visible = false
-position = Vector2(-1319, 0)
-motion_scale = Vector2(3, 1)
-script = ExtResource("10_e36ub")
-animation_player = NodePath("AnimationPlayer")
-
-[node name="CrowdSprite" type="Sprite2D" parent="ParallaxBackground/CrowdLayer"]
-scale = Vector2(0.695, 0.695)
-texture = ExtResource("17_e8heu")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="ParallaxBackground/CrowdLayer"]
-libraries = {
-&"": SubResource("AnimationLibrary_hb5m1")
-}
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -351.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_vertical = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="WelcomeToText3" type="Label" parent="CanvasLayer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Made for \"Mini Jam 182: Horror\" by T. Virtmann"
+horizontal_alignment = 2
 
 [node name="Menu" type="HBoxContainer" parent="CanvasLayer"]
 z_index = 255
@@ -130,16 +181,14 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -246.5
-offset_top = -253.5
+offset_top = -273.0
 offset_right = 246.5
-offset_bottom = 253.5
+offset_bottom = 273.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Menu"]
 layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 4
 
 [node name="WelcomeToText" type="Label" parent="CanvasLayer/Menu/VBoxContainer"]
 layout_mode = 2
@@ -162,13 +211,13 @@ horizontal_alignment = 1
 layout_mode = 2
 max_value = 2.0
 step = 0.1
-value = 0.8
+value = 0.6
 tick_count = 11
 ticks_on_borders = true
 
 [node name="MusicVolumeText" type="Label" parent="CanvasLayer/Menu/VBoxContainer"]
 layout_mode = 2
-text = "Music Volume: 80%"
+text = "Music Volume: 60%"
 
 [node name="SFXVolumeSlider" type="HSlider" parent="CanvasLayer/Menu/VBoxContainer"]
 layout_mode = 2
@@ -196,6 +245,7 @@ layout_mode = 2
 text = "Delay: 0.0 Beats"
 
 [node name="MetronomeToggle" type="CheckButton" parent="CanvasLayer/Menu/VBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Metronome"
@@ -261,7 +311,7 @@ uppercase = true
 
 [node name="TimingSlider" type="HSlider" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
+size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_styles/slider = ExtResource("7_eow3j")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_j5wjh")
@@ -291,6 +341,27 @@ text = "-"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+layer = 20
+
+[node name="CrowdLayer" type="ParallaxLayer" parent="ParallaxBackground" node_paths=PackedStringArray("animation_player") groups=["BeatReceivers"]]
+visible = false
+z_index = 20
+position = Vector2(-1319, 0)
+motion_scale = Vector2(3, 1)
+script = ExtResource("10_e36ub")
+animation_player = NodePath("AnimationPlayer")
+
+[node name="CrowdSprite" type="Sprite2D" parent="ParallaxBackground/CrowdLayer"]
+z_index = 20
+scale = Vector2(0.695, 0.695)
+texture = ExtResource("17_e8heu")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ParallaxBackground/CrowdLayer"]
+libraries = {
+&"": SubResource("AnimationLibrary_hb5m1")
+}
+
 [node name="RatingSounds" type="Node2D" parent="."]
 
 [node name="PerfectRating" type="AudioStreamPlayer" parent="RatingSounds"]
@@ -310,12 +381,43 @@ stream = ExtResource("12_80cx4")
 
 [node name="GhostFrog" parent="." groups=["BeatReceivers"] instance=ExtResource("18_boyg6")]
 visible = false
-position = Vector2(225, -51)
+z_index = 150
+position = Vector2(296, -55)
 scale = Vector2(0.59, 0.59)
 
 [node name="Player" parent="." instance=ExtResource("18_rvswv")]
+z_as_relative = false
 position = Vector2(-308, 48)
 scale = Vector2(-0.47, 0.47)
+
+[node name="Stage" type="Node2D" parent="."]
+z_index = -20
+
+[node name="StageSprite" type="Sprite2D" parent="Stage" node_paths=PackedStringArray("animation_player") groups=["BeatReceivers"]]
+scale = Vector2(0.655, 0.655)
+texture = ExtResource("16_80cx4")
+script = ExtResource("10_e36ub")
+animation_player = NodePath("AnimationPlayer")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Stage/StageSprite"]
+libraries = {
+&"": SubResource("AnimationLibrary_f1jbl")
+}
+
+[node name="StageLight1" type="Node2D" parent="Stage/StageSprite"]
+scale = Vector2(1.51515, 1.53846)
+
+[node name="StageLight" type="Sprite2D" parent="Stage/StageSprite/StageLight1"]
+z_index = 50
+position = Vector2(-208.36, -136.327)
+rotation = 0.319333
+scale = Vector2(0.316414, 0.383599)
+texture = ExtResource("10_hb5m1")
+
+[node name="StageSpotLight" type="Sprite2D" parent="Stage/StageSprite/StageLight1"]
+position = Vector2(-321, 168)
+scale = Vector2(4.57031, 0.664896)
+texture = SubResource("GradientTexture2D_x5p1p")
 
 [connection signal="beat" from="MenuMusicPlayer" to="." method="_on_music_player_beat"]
 [connection signal="ending" from="MenuMusicPlayer" to="." method="_on_music_player_ending"]

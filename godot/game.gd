@@ -31,6 +31,7 @@ extends Node2D
 
 @export var crowd_layer: ParallaxLayer
 @export var enemy: Node2D
+
 @onready var player: Node2D = $Player
 
 @export var inputOffset: float = 0.0;
@@ -176,12 +177,15 @@ func _on_music_player_finished() -> void:
 	if (score > perfect):
 		rating_label.text = "Perfect!"
 		perfect_rating.play()
+		enemy.defeat()
 	elif (score > great):
 		rating_label.text = "Great!"
+		enemy.defeat()
 		great_rating.play()
 	elif (score > passable):
 		rating_label.text = "Passable."
 		passable_rating.play()
+		enemy.defeat()
 	elif (score > bad):
 		rating_label.text = "Bad..."
 		bad_rating.play()

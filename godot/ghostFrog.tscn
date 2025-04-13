@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://d0aqrghhl8l35"]
+[gd_scene load_steps=13 format=3 uid="uid://d0aqrghhl8l35"]
 
 [ext_resource type="Script" uid="uid://g67768jvp8fm" path="res://entity.gd" id="1_iufn1"]
 [ext_resource type="Texture2D" uid="uid://b8l1j8eunfia1" path="res://gfx/entities/ghostfrog/ghostfrog_body.png" id="2_jmfc4"]
 [ext_resource type="Texture2D" uid="uid://db5yfyij0mdes" path="res://gfx/entities/ghostfrog/ghostfrog_arm_l.png" id="3_awbs6"]
 [ext_resource type="Texture2D" uid="uid://cw4ijtrfafrka" path="res://gfx/entities/ghostfrog/ghostfrog_arm_r.png" id="4_iufn1"]
+[ext_resource type="Texture2D" uid="uid://bi01n4n7tlwn3" path="res://gfx/vfx/flame.png" id="5_awbs6"]
 
 [sub_resource type="Animation" id="Animation_03rkj"]
 length = 0.001
@@ -54,6 +55,18 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [-0.20944]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-57, -167)]
 }
 
 [sub_resource type="Animation" id="Animation_jmfc4"]
@@ -109,15 +122,89 @@ tracks/3/keys = {
 "values": [0.20944, 0.0]
 }
 
+[sub_resource type="Animation" id="Animation_awbs6"]
+resource_name = "defeat"
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-57, -167), Vector2(-66, -686)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = false
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.0349066, 12.1475]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/ArmL:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = false
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.88496]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/ArmR:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = false
+tracks/3/keys = {
+"times": PackedFloat32Array(0.25, 0.666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 2.0944]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_pimh3"]
 _data = {
 &"RESET": SubResource("Animation_03rkj"),
+&"defeat": SubResource("Animation_awbs6"),
 &"hit_beat": SubResource("Animation_jmfc4")
 }
 
-[node name="GhostFrog" type="Node2D" node_paths=PackedStringArray("animation_player")]
+[sub_resource type="Curve" id="Curve_awbs6"]
+_data = [Vector2(0.0044843, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_iufn1"]
+curve = SubResource("Curve_awbs6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_iufn1"]
+particle_flag_disable_z = true
+inherit_velocity_ratio = 0.436
+direction = Vector3(0, -1, 0)
+spread = 54.245
+flatness = 0.015
+initial_velocity_max = 436.78
+gravity = Vector3(0, 98, 0)
+scale_min = 2.0
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_iufn1")
+
+[node name="GhostFrog" type="Node2D" node_paths=PackedStringArray("animation_player", "defeat_particles", "parts_skeleton_container")]
 script = ExtResource("1_iufn1")
 animation_player = NodePath("AnimationPlayer")
+defeat_particles = NodePath("GPUParticles2D")
+parts_skeleton_container = NodePath("PartsSkeletonContainer")
 
 [node name="PartsSkeletonContainer" type="Node2D" parent="."]
 
@@ -141,6 +228,7 @@ remote_path = NodePath("../../../../Parts/GhostFrogBody")
 [node name="ArmL" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body"]
 position = Vector2(93, 21)
 rotation = -0.418879
+scale = Vector2(1, 1)
 rest = Transform2D(1, 0, 0, 1, -63, 195)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body/ArmL"]
@@ -162,22 +250,35 @@ remote_path = NodePath("../../../../../Parts/GhostFrogBody/GhostFrogArmR")
 position = Vector2(11.1131, 11.7865)
 rotation = -0.0349066
 scale = Vector2(1, 1)
-skew = -0.0349066
+skew = -0.0349065
 texture = ExtResource("2_jmfc4")
 
 [node name="GhostFrogArmL" type="Sprite2D" parent="PartsSkeletonContainer/Parts/GhostFrogBody"]
-position = Vector2(25.2961, 122.059)
-rotation = -0.418879
+position = Vector2(-16.895, 86.4347)
 scale = Vector2(1, 1)
 texture = ExtResource("3_awbs6")
 
 [node name="GhostFrogArmR" type="Sprite2D" parent="PartsSkeletonContainer/Parts/GhostFrogBody"]
-position = Vector2(-223.004, 63.2182)
-rotation = -0.20944
-scale = Vector2(1, 1)
+position = Vector2(-234.037, 51.7576)
 texture = ExtResource("4_iufn1")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_pimh3")
 }
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+position = Vector2(-54, 155)
+scale = Vector2(2.625, 2.625)
+emitting = false
+amount = 15
+texture = ExtResource("5_awbs6")
+lifetime = 2.0
+one_shot = true
+explosiveness = 0.65
+use_fixed_seed = true
+seed = 2077369593
+fixed_fps = 12
+process_material = SubResource("ParticleProcessMaterial_iufn1")
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

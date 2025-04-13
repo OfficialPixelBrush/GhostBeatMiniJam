@@ -2,11 +2,11 @@
 
 [resource]
 content_margin_bottom = 60.0
-bg_color = Color(0.646797, 0.509212, 0.920296, 1)
+bg_color = Color(0.936835, 0.0573776, 0.233857, 1)
 skew = Vector2(0.39, 0)
-border_width_left = 400
-border_width_right = 400
-border_color = Color(0.987587, 0, 0.295977, 1)
+border_width_left = 300
+border_width_right = 300
+border_color = Color(0.377653, 0.211111, 0.467564, 1)
 border_blend = true
 corner_detail = 1
 shadow_color = Color(0.643366, 0.506096, 0.917922, 1)
