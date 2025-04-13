@@ -1,0 +1,183 @@
+[gd_scene load_steps=8 format=3 uid="uid://d0aqrghhl8l35"]
+
+[ext_resource type="Script" uid="uid://g67768jvp8fm" path="res://entity.gd" id="1_iufn1"]
+[ext_resource type="Texture2D" uid="uid://b8l1j8eunfia1" path="res://gfx/entities/ghostfrog/ghostfrog_body.png" id="2_jmfc4"]
+[ext_resource type="Texture2D" uid="uid://db5yfyij0mdes" path="res://gfx/entities/ghostfrog/ghostfrog_arm_l.png" id="3_awbs6"]
+[ext_resource type="Texture2D" uid="uid://cw4ijtrfafrka" path="res://gfx/entities/ghostfrog/ghostfrog_arm_r.png" id="4_iufn1"]
+
+[sub_resource type="Animation" id="Animation_03rkj"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.0349066]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:skew")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.0349066]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/ArmL:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.418879]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/ArmR:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.20944]
+}
+
+[sub_resource type="Animation" id="Animation_jmfc4"]
+resource_name = "hit_beat"
+length = 0.333342
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.0349066, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:skew")
+tracks/1/interp = 2
+tracks/1/loop_wrap = false
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.0349066, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/ArmL:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = false
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.20944, 0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/ArmR:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = false
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.20944, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pimh3"]
+_data = {
+&"RESET": SubResource("Animation_03rkj"),
+&"hit_beat": SubResource("Animation_jmfc4")
+}
+
+[node name="GhostFrog" type="Node2D" node_paths=PackedStringArray("animation_player")]
+script = ExtResource("1_iufn1")
+animation_player = NodePath("AnimationPlayer")
+
+[node name="PartsSkeletonContainer" type="Node2D" parent="."]
+
+[node name="Skeleton2D" type="Skeleton2D" parent="PartsSkeletonContainer"]
+
+[node name="Base" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D"]
+position = Vector2(62, 163)
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="Body" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D/Base"]
+position = Vector2(-57, -167)
+rotation = -0.0349066
+scale = Vector2(1, 1)
+skew = -0.0349066
+rest = Transform2D(1, 0, 0, 1, -24, -187)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body"]
+position = Vector2(5, 16)
+remote_path = NodePath("../../../../Parts/GhostFrogBody")
+
+[node name="ArmL" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body"]
+position = Vector2(93, 21)
+rotation = -0.418879
+rest = Transform2D(1, 0, 0, 1, -63, 195)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body/ArmL"]
+position = Vector2(-104.895, 81.4347)
+remote_path = NodePath("../../../../../Parts/GhostFrogBody/GhostFrogArmL")
+
+[node name="ArmR" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body"]
+position = Vector2(-169, 21)
+rotation = -0.20944
+rest = Transform2D(1, 0, 0, 1, -37, -253)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body/ArmR"]
+position = Vector2(-60.037, 46.7576)
+remote_path = NodePath("../../../../../Parts/GhostFrogBody/GhostFrogArmR")
+
+[node name="Parts" type="Node2D" parent="PartsSkeletonContainer"]
+
+[node name="GhostFrogBody" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
+position = Vector2(11.1131, 11.7865)
+rotation = -0.0349066
+scale = Vector2(1, 1)
+skew = -0.0349066
+texture = ExtResource("2_jmfc4")
+
+[node name="GhostFrogArmL" type="Sprite2D" parent="PartsSkeletonContainer/Parts/GhostFrogBody"]
+position = Vector2(25.2961, 122.059)
+rotation = -0.418879
+scale = Vector2(1, 1)
+texture = ExtResource("3_awbs6")
+
+[node name="GhostFrogArmR" type="Sprite2D" parent="PartsSkeletonContainer/Parts/GhostFrogBody"]
+position = Vector2(-223.004, 63.2182)
+rotation = -0.20944
+scale = Vector2(1, 1)
+texture = ExtResource("4_iufn1")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_pimh3")
+}

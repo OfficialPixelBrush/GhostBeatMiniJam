@@ -1,0 +1,222 @@
+[gd_scene load_steps=11 format=3 uid="uid://dku5dmb6difq2"]
+
+[ext_resource type="Script" uid="uid://hyx8d674ll8f" path="res://player.gd" id="1_2hs0m"]
+[ext_resource type="Texture2D" uid="uid://b63iqvyj2sqp8" path="res://gfx/entities/player/player_body.png" id="1_nwmpt"]
+[ext_resource type="Texture2D" uid="uid://c4shmqxij8alv" path="res://gfx/entities/player/player_head.png" id="2_03rkj"]
+[ext_resource type="Texture2D" uid="uid://cqtc1sf4ny67t" path="res://gfx/entities/player/player_cannon.png" id="3_pimh3"]
+[ext_resource type="Texture2D" uid="uid://c3gvmlci3pqng" path="res://gfx/entities/player/player_head_yeah.png" id="5_6tppj"]
+[ext_resource type="Texture2D" uid="uid://dq5de8i6j4sdh" path="res://gfx/entities/player/player_head_oof.png" id="5_pimh3"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6tppj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_03rkj")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_6tppj")
+}],
+"loop": true,
+"name": &"goodHit",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_pimh3")
+}],
+"loop": true,
+"name": &"miss",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_1jxqw"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/Cannon:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/Head:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = false
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:skew")
+tracks/3/interp = 1
+tracks/3/loop_wrap = false
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = false
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-32, -159)]
+}
+
+[sub_resource type="Animation" id="Animation_2hs0m"]
+resource_name = "hit_beat"
+length = 0.333342
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/Cannon:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.10472, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/Head:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = false
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.0872665, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:scale")
+tracks/2/interp = 2
+tracks/2/loop_wrap = false
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1.05, 0.95), Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:skew")
+tracks/3/interp = 2
+tracks/3/loop_wrap = false
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.0349066, 0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:position")
+tracks/4/interp = 2
+tracks/4/loop_wrap = false
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-46.165, -129.395), Vector2(-32, -159)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1jxqw"]
+_data = {
+&"RESET": SubResource("Animation_1jxqw"),
+&"hit_beat": SubResource("Animation_2hs0m")
+}
+
+[node name="Player" type="Node2D"]
+script = ExtResource("1_2hs0m")
+
+[node name="PartsSkeletonContainer" type="Node2D" parent="."]
+
+[node name="Skeleton2D" type="Skeleton2D" parent="PartsSkeletonContainer"]
+
+[node name="Base" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D"]
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="Body" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D/Base"]
+position = Vector2(-32, -159)
+rest = Transform2D(1.04936, -0.0366445, 0.0662686, 0.947686, -32, -159)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body"]
+position = Vector2(24, 187)
+remote_path = NodePath("../../../../Parts/PlayerBody")
+
+[node name="Head" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body"]
+position = Vector2(-10, -67)
+rest = Transform2D(0.996195, -0.0871557, 0.0871557, 0.996195, -10, -67)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body/Head"]
+position = Vector2(-32, -110)
+remote_path = NodePath("../../../../../Parts/PlayerBody/PlayerHead")
+
+[node name="Cannon" type="Bone2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body"]
+position = Vector2(-17, 41)
+rest = Transform2D(0.994522, 0.104528, -0.104528, 0.994522, -17, 41)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="PartsSkeletonContainer/Skeleton2D/Base/Body/Cannon"]
+position = Vector2(-43.3121, 51.648)
+remote_path = NodePath("../../../../../Parts/PlayerBody/PlayerCannon")
+
+[node name="Parts" type="Node2D" parent="PartsSkeletonContainer"]
+
+[node name="PlayerBody" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
+position = Vector2(-8, 28)
+texture = ExtResource("1_nwmpt")
+
+[node name="PlayerCannon" type="Sprite2D" parent="PartsSkeletonContainer/Parts/PlayerBody"]
+position = Vector2(-84.3121, -94.352)
+texture = ExtResource("3_pimh3")
+
+[node name="PlayerHead" type="AnimatedSprite2D" parent="PartsSkeletonContainer/Parts/PlayerBody"]
+position = Vector2(-66, -364)
+sprite_frames = SubResource("SpriteFrames_6tppj")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_1jxqw")
+}

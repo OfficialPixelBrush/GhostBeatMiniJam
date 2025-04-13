@@ -29,7 +29,9 @@ extends Node2D
 @onready var delay_text: Label = $CanvasLayer/Menu/VBoxContainer/DelayText
 @onready var delay_slider: HSlider = $CanvasLayer/Menu/VBoxContainer/DelaySlider
 
-@onready var crowd_layer: ParallaxLayer = $ParallaxBackground/CrowdLayer
+@export var crowd_layer: ParallaxLayer
+@export var enemy: Node2D
+@onready var player: Node2D = $Player
 
 @export var inputOffset: float = 0.0;
 @export var errorMargin : float = 0.3;
@@ -93,9 +95,9 @@ func _ready() -> void:
 	delay_text.text = "Delay: %.2f Beats" % inputOffset
 	delay_slider.value = inputOffset
 
-func switchMusicPlayer(player):
+func switchMusicPlayer(newMusicPlayer):
 	music_player.deactivate()
-	music_player = player;
+	music_player = newMusicPlayer;
 	validBeat = false;
 	beatSubmitted = false
 	beatsHit = 0;
@@ -107,6 +109,7 @@ func switchMusicPlayer(player):
 
 func _input(event):
 	if event.is_action_pressed("input_beat"):
+		player.beat()
 		beatSound.play()
 		var result = music_player.getBeat(inputOffset,errorMargin)
 		#print(result)
@@ -119,6 +122,8 @@ func _input(event):
 				timing_slider.value = error;
 				timing_label.text = "%.2f Beats" % error;
 				beatsHit += 1
+				if (noInputBeats > 0):
+					noInputBeats -= 1
 		else:
 			timing_label.text = "Wait!";
 	if event.is_action_pressed("close_game"):
@@ -136,6 +141,7 @@ func failedBeat() -> void:
 	if (menuMode):
 		beatsHit = 0
 	beatsMissed += 1;
+	player.missBeat()
 	failure.play();
  
 func checkMenu():
@@ -145,9 +151,11 @@ func checkMenu():
 		menuMode = false
 		menu.hide()
 		crowd_layer.show()
+		enemy.show()
 		switchMusicPlayer(game_music_player);
 
 func _on_music_player_beat(beat) -> void:
+	sendBeatToEntities();
 	checkMenu()
 	if (not playMetronome):
 		return
@@ -223,9 +231,8 @@ func _on_music_volume_slider_value_changed(value: float) -> void:
 
 func setMusicVolume(value):
 	music_volume_text.text = "Music Volume: %.0f%%" % (value*100)
-	for node in self.get_children():
-		if (node is AudioStreamPlayer and node.is_in_group("MusicPlayers")):
-			node.volume_linear = value;
+	for node in get_tree().get_nodes_in_group("MusicPlayers"):
+		node.volume_linear = value;
 
 func _on_sfx_volume_slider_value_changed(value: float) -> void:
 	sfx_volume_text.text = "SFX Volume: %.0f%%" % (value*100)
@@ -234,6 +241,10 @@ func _on_sfx_volume_slider_value_changed(value: float) -> void:
 			node.volume_linear = value;
 	pass # Replace with function body.
 
+func sendBeatToEntities() -> void:
+	for node in get_tree().get_nodes_in_group("BeatReceivers"):
+		node.beat();
+	pass # Replace with function body.
 
 func _on_metronome_toggle_toggled(toggled_on: bool) -> void:
 	playMetronome = toggled_on;
